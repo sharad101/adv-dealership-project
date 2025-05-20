@@ -2,20 +2,19 @@ package com.pluralsight;
 
 import java.util.List;
 import java.util.Scanner;
+import java.time.LocalDate;
+
 
 public class UserInterface {
 
     private Dealership dealership;
-    private Scanner scanner;
+    private Scanner scanner = new Scanner(System.in);
 
-    public UserInterface() {
-        scanner = new Scanner(System.in);
-    }
 
     public void display() {
         init();
-        boolean quit = false;
-        while (!quit) {
+        boolean running = false;
+        while (!running) {
             System.out.println("---------- Menu ----------");
             System.out.println("1. Get vehicles by price");
             System.out.println("2. Get vehicles by make and model");
@@ -26,6 +25,7 @@ public class UserInterface {
             System.out.println("7. Get all vehicles");
             System.out.println("8. Add vehicle");
             System.out.println("9. Remove vehicle");
+            System.out.println("10. Sell or Lease vehicle");
             System.out.println("0. Quit");
 
             System.out.print("Enter your choice: ");
@@ -63,7 +63,7 @@ public class UserInterface {
                     processSellOrLeaseVehicle();
                     break;
                 case "0":
-                    quit = true;
+                    running = true;
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
@@ -74,11 +74,16 @@ public class UserInterface {
     public void processGetByPriceRequest() {
         System.out.print("Enter minimum price: ");
         double min = scanner.nextDouble();
+        scanner.nextLine();
+
         System.out.print("Enter maximum price: ");
         double max = scanner.nextDouble();
+        scanner.nextLine();
+
         List<Vehicle> vehicles = dealership.getVehiclesByPrice(min, max);
         displayVehicles(vehicles);
     }
+
 
     public void processGetByMakeModelRequest() {
         System.out.print("Enter make: ");
@@ -89,11 +94,14 @@ public class UserInterface {
         displayVehicles(vehicles);
     }
 
+
     public void processGetByYearRequest() {
         System.out.print("Enter minimum year: ");
         int min = scanner.nextInt();
+        scanner.nextLine();
         System.out.print("Enter maximum year: ");
         int max = scanner.nextInt();
+        scanner.nextLine();
         List<Vehicle> vehicles = dealership.getVehiclesByYear(min, max);
         displayVehicles(vehicles);
     }
@@ -108,8 +116,10 @@ public class UserInterface {
     public void processGetByMileageRequest() {
         System.out.print("Enter minimum mileage: ");
         int min = scanner.nextInt();
+        scanner.nextLine();
         System.out.print("Enter maximum mileage: ");
         int max = scanner.nextInt();
+        scanner.nextLine();
         List<Vehicle> vehicles = dealership.getVehiclesByMileage(min, max);
         displayVehicles(vehicles);
     }
@@ -166,6 +176,7 @@ public class UserInterface {
     public void processRemoveVehicleRequest() {
         System.out.print("Enter the VIN of the vehicle you wish to remove: ");
         int vin = scanner.nextInt();
+        scanner.nextLine();
 
         boolean vehicleRemoved = false;
         for (Vehicle vehicle : dealership.getAllVehicles()) {
@@ -184,17 +195,6 @@ public class UserInterface {
 
         DealershipFileManager manager = new DealershipFileManager();
         manager.saveDealership(dealership);
-    }
-
-    private void init() {
-        DealershipFileManager manager = new DealershipFileManager();
-        dealership = manager.getDealership();
-    }
-
-    private void displayVehicles(List<Vehicle> vehicles) {
-        for (Vehicle vehicle : vehicles) {
-            System.out.println(vehicle.toString());
-        }
     }
 
     public void processSellOrLeaseVehicle() {
@@ -227,14 +227,14 @@ public class UserInterface {
         if (contractType.equalsIgnoreCase("sale")) {
             System.out.print("Is this a financed purchase? (true/false): ");
             boolean finance = Boolean.parseBoolean(scanner.nextLine());
-            contract = new SalesContract("2025-05-19", name, email, selectedVehicle, finance);
+            contract = new SalesContract(LocalDate.now().toString(), name, email, selectedVehicle, finance);
         } else if (contractType.equalsIgnoreCase("lease")) {
             System.out.print("Enter expected ending value: ");
             double expectedEndingValue = Double.parseDouble(scanner.nextLine());
             System.out.print("Enter lease fee: ");
             double leaseFee = Double.parseDouble(scanner.nextLine());
-            contract = new LeaseContract("2025-05-19", name, email, selectedVehicle, expectedEndingValue, leaseFee);
-    } else {
+            contract = new LeaseContract(LocalDate.now().toString(), name, email, selectedVehicle, expectedEndingValue, leaseFee);
+        } else {
             System.out.println("Invalid contract type.");
             return;
         }
@@ -246,6 +246,17 @@ public class UserInterface {
         manager.saveDealership(dealership);
 
         System.out.println("Contract saved and vehicle removed from inventory.");
+    }
+
+    private void init() {
+        DealershipFileManager manager = new DealershipFileManager();
+        dealership = manager.getDealership();
+    }
+
+    private void displayVehicles(List<Vehicle> vehicles) {
+        for (Vehicle vehicle : vehicles) {
+            System.out.println(vehicle.toString());
+        }
     }
 
 }

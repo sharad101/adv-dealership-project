@@ -9,11 +9,21 @@ public class SalesContract extends Contract {
     public SalesContract(String date, String customerName, String customerEmail, Vehicle vehicleSold, boolean financeOption) {
         super(date, customerName, customerEmail, vehicleSold);
         this.financeOption = financeOption;
-
-        // Calculations for fees
         this.salesTaxAmount = getVehicleSold().getPrice() * 0.05;
         this.recordingFee = 100.00;
         this.processingFee = getVehicleSold().getPrice() < 10000 ? 295.00 : 495.00;
+    }
+
+    public double getSalesTaxAmount() {
+        return salesTaxAmount;
+    }
+
+    public double getRecordingFee() {
+        return recordingFee;
+    }
+
+    public double getProcessingFee() {
+        return processingFee;
     }
 
     @Override

@@ -4,7 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class ContractDataManager {
+public class ContractFileManager {
 
     private static final String SALES_CONTRACT_FILE = "salesContracts.csv";
     private static final String LEASE_CONTRACT_FILE = "leaseContracts.csv";
